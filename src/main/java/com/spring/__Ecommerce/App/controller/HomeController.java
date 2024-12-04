@@ -9,4 +9,12 @@ public class HomeController {
     String index(){
         return "index";
     }
+    @GetMapping("/login")
+    String login(){
+        return "login";
+    }
+    @GetMapping("/register")
+    String register(){
+        return "register";
+    }
 }
