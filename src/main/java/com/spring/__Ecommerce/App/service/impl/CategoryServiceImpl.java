@@ -5,6 +5,7 @@ import com.spring.__Ecommerce.App.repository.CategoryRepository;
 import com.spring.__Ecommerce.App.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 
@@ -26,4 +27,21 @@ public class CategoryServiceImpl implements CategoryService {
     public List<Category> getAllCategory() {
         return categoryRepository.findAll();
     }
+
+    @Override
+    public Boolean deleteCategory(int id) {
+       Category category= categoryRepository.findById(id).orElse(null);
+       if (!ObjectUtils.isEmpty(category)){
+           categoryRepository.delete(category);
+           return true;
+       }
+       return false;
+    }
+
+    @Override
+    public Category getCategoryById(int id) {
+       Category category= categoryRepository.findById(id).orElse(null);
+        return category;
+    }
+
 }
