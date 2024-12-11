@@ -1,7 +1,9 @@
 package com.spring.__Ecommerce.App.controller;
 
 import com.spring.__Ecommerce.App.entity.Category;
+import com.spring.__Ecommerce.App.entity.Product;
 import com.spring.__Ecommerce.App.service.CategoryService;
+import com.spring.__Ecommerce.App.service.ProductService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -17,18 +19,23 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private ProductService productService;
     @GetMapping("/")
     public String index(){
         return "admin/index";
     }
     @GetMapping("/addProduct")
-    public String addProduct(){
+    public String addProduct(Model m){
+        List<Category> catagories = categoryService.getAllCategory();
+        m.addAttribute("catagories",catagories);
         return "admin/add_product";
     }
     @GetMapping("/addCategory")
@@ -101,5 +108,22 @@ public class AdminController {
 
        }
         return "redirect:/admin/editCategory/"+ category.getId();
+    }
+    @PostMapping("/saveProduct")
+    public String saveProduct(@ModelAttribute Product product,@RequestParam("file") MultipartFile image,HttpSession session) throws IOException {
+        String imageName = image.isEmpty() ? "default.jpg" : image.getOriginalFilename();
+        product.setImage(imageName);
+       Product saveProduct= productService.saveProduct(product);
+       if (!ObjectUtils.isEmpty(saveProduct)){
+           session.setAttribute("succMsg","Product Saved Success");
+           //Store the Image File
+           File saveFile= new ClassPathResource("static/img").getFile();
+           Path path= Paths.get(saveFile.getAbsolutePath()+ File.separator + "product_img"+File.separator + image.getOriginalFilename());
+           //System.out.println(path);
+           Files.copy(image.getInputStream(),path, StandardCopyOption.REPLACE_EXISTING);
+       }else {
+           session.setAttribute("errorMsg","Something wrong on server");
+       }
+        return "redirect:/admin/addProduct";
     }
 }
