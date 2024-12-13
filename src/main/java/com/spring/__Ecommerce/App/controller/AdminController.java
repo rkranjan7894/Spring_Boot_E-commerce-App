@@ -113,6 +113,8 @@ public class AdminController {
     public String saveProduct(@ModelAttribute Product product,@RequestParam("file") MultipartFile image,HttpSession session) throws IOException {
         String imageName = image.isEmpty() ? "default.jpg" : image.getOriginalFilename();
         product.setImage(imageName);
+        product.setDiscount(0);
+        product.setDiscountPrice(product.getPrice());
        Product saveProduct= productService.saveProduct(product);
        if (!ObjectUtils.isEmpty(saveProduct)){
            session.setAttribute("succMsg","Product Saved Success");
@@ -169,11 +171,20 @@ public class AdminController {
         oldProduct.setPrice(product.getPrice());
         oldProduct.setStock(product.getStock());
         oldProduct.setImage(image);
+        oldProduct.setDiscount(product.getDiscount());
+        // 5=100*(5/100); 100-5=95
+        Double discount = product.getPrice() * (product.getDiscount() / 100.0);  //Discount Formula
+        Double discountPrice= product.getPrice()-discount;
+        oldProduct.setDiscountPrice(discountPrice);
+
     }
+    if (product.getDiscount() < 0 || product.getDiscount() > 100) {
+        session.setAttribute("errorMsg", "invalid Discount.");
+    }else {
         // Save the updated product
         Product updatedProduct = productService.saveProduct(oldProduct);
 
-        if (! ObjectUtils.isEmpty(updatedProduct)) {   //if (updatedProduct != null) {
+        if (!ObjectUtils.isEmpty(updatedProduct)) {   //if (updatedProduct != null) {
             if (!file.isEmpty()) {
                 // Store the image file
                 File saveFile = new ClassPathResource("static/img").getFile();
@@ -186,7 +197,7 @@ public class AdminController {
         } else {
             session.setAttribute("errorMsg", "Something went wrong on the server.");
         }
-
+    }
         return "redirect:/admin/editProduct/" + product.getId();
     }
 
