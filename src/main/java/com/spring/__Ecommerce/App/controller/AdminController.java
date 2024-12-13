@@ -142,4 +142,52 @@ public class AdminController {
 
         return "redirect:/admin/products";
     }
+    @GetMapping("/editProduct/{id}")
+    public String editProduct(@PathVariable int id,Model m){
+        m.addAttribute("product",productService.getProductById(id));
+        m.addAttribute("categories",categoryService.getAllCategory());
+        return "admin/edit_product";
+    }
+
+
+    @PostMapping("/updateProduct")
+    public String updateProduct(
+            @ModelAttribute Product product,
+            @RequestParam("file") MultipartFile file,
+            HttpSession session) throws IOException {
+
+        // Retrieve the existing product
+        Product oldProduct = productService.getProductById(product.getId());
+
+        // Determine the image to use
+        String image = file.isEmpty() ? oldProduct.getImage() : file.getOriginalFilename();
+    if (! ObjectUtils.isEmpty(product)) {
+        // Update fields if product is valid
+        oldProduct.setTitle(product.getTitle());
+        oldProduct.setDescription(product.getDescription());
+        oldProduct.setCategory(product.getCategory());
+        oldProduct.setPrice(product.getPrice());
+        oldProduct.setStock(product.getStock());
+        oldProduct.setImage(image);
+    }
+        // Save the updated product
+        Product updatedProduct = productService.saveProduct(oldProduct);
+
+        if (! ObjectUtils.isEmpty(updatedProduct)) {   //if (updatedProduct != null) {
+            if (!file.isEmpty()) {
+                // Store the image file
+                File saveFile = new ClassPathResource("static/img").getFile();
+                Path path = Paths.get(saveFile.getAbsolutePath()
+                        + File.separator + "product_img"
+                        + File.separator + file.getOriginalFilename());
+                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            }
+            session.setAttribute("succMsg", "Product updated successfully.");
+        } else {
+            session.setAttribute("errorMsg", "Something went wrong on the server.");
+        }
+
+        return "redirect:/admin/editProduct/" + product.getId();
+    }
+
 }
