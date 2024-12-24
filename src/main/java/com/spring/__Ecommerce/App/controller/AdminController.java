@@ -171,7 +171,9 @@ public class AdminController {
         oldProduct.setPrice(product.getPrice());
         oldProduct.setStock(product.getStock());
         oldProduct.setImage(image);
+        oldProduct.setIsActive(product.getIsActive());
         oldProduct.setDiscount(product.getDiscount());
+
         // 5=100*(5/100); 100-5=95
         Double discount = product.getPrice() * (product.getDiscount() / 100.0);  //Discount Formula
         Double discountPrice= product.getPrice()-discount;

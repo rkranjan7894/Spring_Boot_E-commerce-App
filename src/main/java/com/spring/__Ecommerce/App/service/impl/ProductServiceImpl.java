@@ -12,6 +12,13 @@ import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProductService {
+    @Override
+    public List<Product> getAllActiveProducts() {
+     List<Product> products=   productRepository.findByIsActiveTrue();
+
+        return products;
+    }
+
     @Autowired
     private ProductRepository productRepository;
     @Override
