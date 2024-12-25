@@ -1,6 +1,6 @@
 package com.spring.__Ecommerce.App.service.impl;
 
-import com.spring.__Ecommerce.App.entity.Category;
+
 import com.spring.__Ecommerce.App.entity.Product;
 import com.spring.__Ecommerce.App.repository.ProductRepository;
 import com.spring.__Ecommerce.App.service.ProductService;
@@ -13,9 +13,13 @@ import java.util.List;
 @Service
 public class ProductServiceImpl implements ProductService {
     @Override
-    public List<Product> getAllActiveProducts() {
-     List<Product> products=   productRepository.findByIsActiveTrue();
-
+    public List<Product> getAllActiveProducts(String category) {
+        List<Product> products = null;
+        if (ObjectUtils.isEmpty(category)){
+          products=productRepository.findByIsActiveTrue();
+        }else {
+            products=productRepository.findByCategory(category);
+        }
         return products;
     }
 
