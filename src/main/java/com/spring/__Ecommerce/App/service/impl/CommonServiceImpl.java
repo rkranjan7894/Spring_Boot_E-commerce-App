@@ -1,12 +1,13 @@
-package com.spring.__Ecommerce.App.service;
+package com.spring.__Ecommerce.App.service.impl;
 
+import com.spring.__Ecommerce.App.service.CommonService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 @Service
-public class CommonServiceImpl implements CommonService{
+public class CommonServiceImpl implements CommonService {
     @Override
     public void removeSessionMessage() {
       HttpServletRequest request=((ServletRequestAttributes) (RequestContextHolder.getRequestAttributes())).getRequest();
