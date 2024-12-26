@@ -36,7 +36,7 @@ public class HomeController {
     String index(){
         return "index";
     }
-    @GetMapping("/login")
+    @GetMapping("/signin")
     String login(){
         return "login";
     }
