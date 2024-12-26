@@ -40,6 +40,8 @@ public class AdminController {
             UserDtls userDtls=userService.getUserByEmail(email);
             m.addAttribute("user",userDtls);
         }
+        List<Category> allActiveCategory=categoryService.getAllActiveCategory();
+        m.addAttribute("categorys",allActiveCategory);
     }
     @GetMapping("/")
     public String index(){
