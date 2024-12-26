@@ -2,8 +2,10 @@ package com.spring.__Ecommerce.App.controller;
 
 import com.spring.__Ecommerce.App.entity.Category;
 import com.spring.__Ecommerce.App.entity.Product;
+import com.spring.__Ecommerce.App.entity.UserDtls;
 import com.spring.__Ecommerce.App.service.CategoryService;
 import com.spring.__Ecommerce.App.service.ProductService;
+import com.spring.__Ecommerce.App.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -19,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -28,6 +31,16 @@ public class AdminController {
     private CategoryService categoryService;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private UserService userService;
+    @ModelAttribute
+    public void getUserDetails(Principal p, Model m){
+        if (p!=null){
+            String email=p.getName();
+            UserDtls userDtls=userService.getUserByEmail(email);
+            m.addAttribute("user",userDtls);
+        }
+    }
     @GetMapping("/")
     public String index(){
         return "admin/index";
