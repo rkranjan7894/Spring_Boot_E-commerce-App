@@ -28,4 +28,5 @@ public class UserDtls {
     private String password;
     private String profileImage;
     private String role;
+    private Boolean isEnable;
 }
