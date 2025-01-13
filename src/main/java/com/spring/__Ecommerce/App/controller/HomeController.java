@@ -3,6 +3,7 @@ package com.spring.__Ecommerce.App.controller;
 import com.spring.__Ecommerce.App.entity.Category;
 import com.spring.__Ecommerce.App.entity.Product;
 import com.spring.__Ecommerce.App.entity.UserDtls;
+import com.spring.__Ecommerce.App.service.CartService;
 import com.spring.__Ecommerce.App.service.CategoryService;
 import com.spring.__Ecommerce.App.service.ProductService;
 import com.spring.__Ecommerce.App.service.UserService;
@@ -44,12 +45,16 @@ public class HomeController {
     private CommonUtil commonUtil;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    private CartService cartService;
     @ModelAttribute
     public void getUserDetails(Principal p,Model m){
         if (p!=null){
             String email=p.getName();
             UserDtls userDtls=userService.getUserByEmail(email);
             m.addAttribute("user",userDtls);
+           Integer countCart= cartService.getCountCart(userDtls.getId());
+            m.addAttribute("countCart",countCart);
         }
         List<Category> allActiveCategory=categoryService.getAllActiveCategory();
         m.addAttribute("categorys",allActiveCategory);
