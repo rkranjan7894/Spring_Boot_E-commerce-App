@@ -93,6 +93,10 @@ return "user/home";
     public String saveOrder(@ModelAttribute OrderRequest request,Principal p){
         UserDtls user=getLoggedInUserDetails(p);
         orderService.saveOrder(user.getId(),request);
+        return "redirect:/user/success";
+    }
+    @GetMapping("/success")
+    private String loadSuccess(){
         return "/user/success";
     }
 
