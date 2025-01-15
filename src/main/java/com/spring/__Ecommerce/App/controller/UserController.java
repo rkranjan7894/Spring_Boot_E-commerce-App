@@ -2,9 +2,11 @@ package com.spring.__Ecommerce.App.controller;
 
 import com.spring.__Ecommerce.App.entity.Cart;
 import com.spring.__Ecommerce.App.entity.Category;
+import com.spring.__Ecommerce.App.entity.OrderRequest;
 import com.spring.__Ecommerce.App.entity.UserDtls;
 import com.spring.__Ecommerce.App.service.CartService;
 import com.spring.__Ecommerce.App.service.CategoryService;
+import com.spring.__Ecommerce.App.service.OrderService;
 import com.spring.__Ecommerce.App.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private CartService cartService;
+    @Autowired
+    private OrderService orderService;
     @GetMapping("/")
     public String home(){
 return "user/home";
@@ -76,5 +80,11 @@ return "user/home";
         return "/user/order";
     }
 
+    @PostMapping("/save-order")
+    public String saveOrder(@ModelAttribute OrderRequest request,Principal p){
+        UserDtls user=getLoggedInUserDetails(p);
+        orderService.saveOrder(user.getId(),request);
+        return "/user/success";
+    }
 }
 
