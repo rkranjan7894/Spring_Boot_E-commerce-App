@@ -76,7 +76,16 @@ return "user/home";
         return userDtls;
     }
     @GetMapping("/orders")
-    public String orderPage(){
+    public String orderPage(Principal p,Model m){
+        UserDtls user=getLoggedInUserDetails(p);
+        List<Cart> carts= cartService.getCartsByUser(user.getId());
+        m.addAttribute("carts",carts);
+        if (carts.size()>0) {
+            Double OrderPrice = carts.get(carts.size() - 1).getTotalOrderPrice();
+            Double totalOrderPrice = carts.get(carts.size() - 1).getTotalOrderPrice() +50+15;
+            m.addAttribute("OrderPrice", OrderPrice);
+            m.addAttribute("totalOrderPrice", totalOrderPrice);
+        }
         return "/user/order";
     }
 
@@ -86,5 +95,6 @@ return "user/home";
         orderService.saveOrder(user.getId(),request);
         return "/user/success";
     }
+
 }
 
