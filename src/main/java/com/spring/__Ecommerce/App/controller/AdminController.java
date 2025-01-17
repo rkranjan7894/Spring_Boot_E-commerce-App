@@ -2,11 +2,10 @@ package com.spring.__Ecommerce.App.controller;
 
 import com.spring.__Ecommerce.App.entity.Category;
 import com.spring.__Ecommerce.App.entity.Product;
+import com.spring.__Ecommerce.App.entity.ProductOrder;
 import com.spring.__Ecommerce.App.entity.UserDtls;
-import com.spring.__Ecommerce.App.service.CartService;
-import com.spring.__Ecommerce.App.service.CategoryService;
-import com.spring.__Ecommerce.App.service.ProductService;
-import com.spring.__Ecommerce.App.service.UserService;
+import com.spring.__Ecommerce.App.service.*;
+import com.spring.__Ecommerce.App.util.OrderStatus;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -34,6 +33,8 @@ public class AdminController {
     private ProductService productService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private OrderService orderService;
     @Autowired
     CartService cartService;
     @ModelAttribute
@@ -237,5 +238,28 @@ public class AdminController {
             session.setAttribute("errorMsg","Something wrong on server");
         }
         return "redirect:/admin/users";
+    }
+    @GetMapping("/orders")
+    public String getAllOrders(Model m){
+           List<ProductOrder> allOrders=orderService.getAllOrders();
+           m.addAttribute("orders",allOrders);
+        return "/admin/orders";
+    }
+    @PostMapping("/update-order-status")
+    public  String  updateOrderStatus(@RequestParam Integer id, @RequestParam Integer st,HttpSession session){
+        OrderStatus[] values=OrderStatus.values();
+        String status=null;
+        for (OrderStatus orderSt :values){
+            if (orderSt.getId().equals(st)){
+                status=orderSt.getName();
+            }
+        }
+        Boolean updateOrder=orderService.updateOrderStatus(id,status);
+        if (updateOrder){
+            session.setAttribute("succMsg","Status Updated");
+        }else {
+            session.setAttribute("errorMsg","Status not Updated");
+        }
+        return "redirect:/admin/orders";
     }
 }
