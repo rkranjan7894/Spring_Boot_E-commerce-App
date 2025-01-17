@@ -5,7 +5,9 @@ import com.spring.__Ecommerce.App.service.CartService;
 import com.spring.__Ecommerce.App.service.CategoryService;
 import com.spring.__Ecommerce.App.service.OrderService;
 import com.spring.__Ecommerce.App.service.UserService;
+import com.spring.__Ecommerce.App.util.CommonUtil;
 import com.spring.__Ecommerce.App.util.OrderStatus;
+import jakarta.mail.MessagingException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.List;
 @Controller
@@ -26,6 +30,8 @@ public class UserController {
     private CartService cartService;
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private CommonUtil commonUtil;
     @GetMapping("/")
     public String home(){
 return "user/home";
@@ -89,7 +95,7 @@ return "user/home";
     }
 
     @PostMapping("/save-order")
-    public String saveOrder(@ModelAttribute OrderRequest request,Principal p){
+    public String saveOrder(@ModelAttribute OrderRequest request,Principal p) throws MessagingException, UnsupportedEncodingException {
         UserDtls user=getLoggedInUserDetails(p);
         orderService.saveOrder(user.getId(),request);
         return "redirect:/user/success";
@@ -114,8 +120,14 @@ return "user/home";
                 status=orderSt.getName();
             }
         }
-        Boolean updateOrder=orderService.updateOrderStatus(id,status);
-        if (updateOrder){
+        ProductOrder updateOrder=orderService.updateOrderStatus(id,status);
+        try {
+            commonUtil.sendMailForProductOrder(updateOrder,status);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if (!ObjectUtils.isEmpty(updateOrder)){
             session.setAttribute("succMsg","Status Updated");
         }else {
             session.setAttribute("errorMsg","Status not Updated");

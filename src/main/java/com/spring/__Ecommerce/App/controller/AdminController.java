@@ -5,6 +5,7 @@ import com.spring.__Ecommerce.App.entity.Product;
 import com.spring.__Ecommerce.App.entity.ProductOrder;
 import com.spring.__Ecommerce.App.entity.UserDtls;
 import com.spring.__Ecommerce.App.service.*;
+import com.spring.__Ecommerce.App.util.CommonUtil;
 import com.spring.__Ecommerce.App.util.OrderStatus;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,8 @@ public class AdminController {
     private OrderService orderService;
     @Autowired
     CartService cartService;
+    @Autowired
+    private CommonUtil commonUtil;
     @ModelAttribute
     public void getUserDetails(Principal p, Model m){
         if (p!=null){
@@ -254,8 +257,14 @@ public class AdminController {
                 status=orderSt.getName();
             }
         }
-        Boolean updateOrder=orderService.updateOrderStatus(id,status);
-        if (updateOrder){
+        ProductOrder updateOrder=orderService.updateOrderStatus(id,status);
+        try {
+            commonUtil.sendMailForProductOrder(updateOrder,status);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if (!ObjectUtils.isEmpty(updateOrder)){
             session.setAttribute("succMsg","Status Updated");
         }else {
             session.setAttribute("errorMsg","Status not Updated");
