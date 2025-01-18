@@ -1,6 +1,8 @@
 package com.spring.__Ecommerce.App.service;
 
 import com.spring.__Ecommerce.App.entity.UserDtls;
+import jakarta.mail.Multipart;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -17,4 +19,5 @@ public interface UserService {
    public void updateUserResetToken(String email, String resetToken);
    public UserDtls getUserByToken(String token);
    public UserDtls updateUser(UserDtls user);
+   public UserDtls updateUserProfile(UserDtls user, MultipartFile img);
 }
