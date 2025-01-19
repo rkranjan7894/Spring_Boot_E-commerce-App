@@ -154,6 +154,13 @@ public class HomeController {
           m.addAttribute("msg","Password Change Successfully");
             return "message";
         }
-
+    }
+    @GetMapping("/search")
+    public String searchProduct(@RequestParam String ch,Model m){
+        List<Product> searchProducts=productService.searchProduct(ch);
+        m.addAttribute("products",searchProducts);
+        List<Category> categories=categoryService.getAllActiveCategory();
+        m.addAttribute("categories",categories);
+        return "product";
     }
    }

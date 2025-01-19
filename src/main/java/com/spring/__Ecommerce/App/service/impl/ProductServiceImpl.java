@@ -50,4 +50,9 @@ public class ProductServiceImpl implements ProductService {
        Product product= productRepository.findById(id).orElse(null);
         return product;
     }
+
+    @Override
+    public List<Product> searchProduct(String ch) {
+     return productRepository.findByTitleContainingIgnoreCaseOrCategoryContainingIgnoreCase(ch,ch);
+    }
 }
