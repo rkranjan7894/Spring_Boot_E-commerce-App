@@ -153,8 +153,15 @@ public class AdminController {
         return "redirect:/admin/addProduct";
     }
     @GetMapping("/products")
-    public String viewProducts(Model m){
-        m.addAttribute("products",productService.getAllProducts());
+    public String viewProducts(Model m,@RequestParam(defaultValue = "") String ch){
+        List<Product> products=null;
+
+        if (ch!=null && ch.length()>0){
+            products =productService.searchProduct(ch.trim());
+        }else {
+           products=productService.getAllProducts();
+        }
+        m.addAttribute("products",products);
         return "admin/products";
     }
     @GetMapping("/deleteProduct/{id}")
