@@ -169,11 +169,23 @@ public class HomeController {
         }
     }
     @GetMapping("/search")
-    public String searchProduct(@RequestParam String ch,Model m){
-        List<Product> searchProducts=productService.searchProduct(ch.trim());
-        m.addAttribute("products",searchProducts);
+    public String searchProduct(Model m,@RequestParam(defaultValue = "") String ch, @RequestParam(value = "category",defaultValue = "")String category,
+                                @RequestParam(name = "pageNo",defaultValue = "0")Integer pageNo,
+                                @RequestParam(name = "pageSize",defaultValue = "8")Integer pageSize){
+        Page<Product> page=productService.searchActiveProductPagination(pageNo,pageSize,ch.trim());
+        m.addAttribute("products",page);
         List<Category> categories=categoryService.getAllActiveCategory();
         m.addAttribute("categories",categories);
+        List<Product> products=page.getContent();
+        m.addAttribute("products",products);
+        m.addAttribute("productsSize",products.size());
+
+        m.addAttribute("pageNo",page.getNumber());
+        m.addAttribute("pageSize",pageSize);
+        m.addAttribute("totalElements",page.getTotalElements());
+        m.addAttribute("totalPages",page.getTotalPages());
+        m.addAttribute("isFirst",page.isFirst());
+        m.addAttribute("isLast",page.isLast());
         return "product";
     }
    }
