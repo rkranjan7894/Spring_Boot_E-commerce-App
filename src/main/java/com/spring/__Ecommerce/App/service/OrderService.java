@@ -3,6 +3,7 @@ package com.spring.__Ecommerce.App.service;
 import com.spring.__Ecommerce.App.entity.OrderRequest;
 import com.spring.__Ecommerce.App.entity.ProductOrder;
 import jakarta.mail.MessagingException;
+import org.springframework.data.domain.Page;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -13,4 +14,5 @@ public interface OrderService {
     public ProductOrder updateOrderStatus(Integer id,String status);
     public List<ProductOrder> getAllOrders();
     public ProductOrder getOrdersByOrderId(String orderId);
+    public Page<ProductOrder> getAllOrdersPagination(Integer pageNo, Integer pageSize);
 }
