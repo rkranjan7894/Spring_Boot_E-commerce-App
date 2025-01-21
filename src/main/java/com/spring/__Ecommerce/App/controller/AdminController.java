@@ -163,15 +163,23 @@ public class AdminController {
         return "redirect:/admin/addProduct";
     }
     @GetMapping("/products")
-    public String viewProducts(Model m,@RequestParam(defaultValue = "") String ch){
-        List<Product> products=null;
+    public String viewProducts(Model m,@RequestParam(defaultValue = "") String ch,@RequestParam(name="pageNo",defaultValue = "0")Integer pageNo,
+                               @RequestParam(name = "pageSize",defaultValue = "10")Integer pageSize){
+        Page<Product> page=null;
 
         if (ch!=null && ch.length()>0){
-            products =productService.searchProduct(ch.trim());
+            page =productService.searchProductPagination(pageNo,pageSize,ch.trim());
         }else {
-           products=productService.getAllProducts();
+           page=productService.getAllProductsPagination(pageNo,pageSize);
         }
-        m.addAttribute("products",products);
+        m.addAttribute("products",page.getContent());
+
+        m.addAttribute("pageNo",page.getNumber());
+        m.addAttribute("pageSize",pageSize);
+        m.addAttribute("totalElements",page.getTotalElements());
+        m.addAttribute("totalPages",page.getTotalPages());
+        m.addAttribute("isFirst",page.isFirst());
+        m.addAttribute("isLast",page.isLast());
         return "admin/products";
     }
     @GetMapping("/deleteProduct/{id}")
