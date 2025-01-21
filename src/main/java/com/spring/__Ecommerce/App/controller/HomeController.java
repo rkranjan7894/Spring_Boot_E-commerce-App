@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import org.aspectj.apache.bcel.util.ClassPath;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -72,12 +73,24 @@ public class HomeController {
         return "register";
     }
     @GetMapping("/products")
-    String products(Model m, @RequestParam(value = "category",defaultValue = "")String category){
-      List<Category> categories= categoryService.getAllActiveCategory();
-     List<Product> products=productService.getAllActiveProducts(category);
-     m.addAttribute("categories",categories);
-     m.addAttribute("products",products);
-     m.addAttribute("paramValue",category);
+    String products(Model m, @RequestParam(value = "category",defaultValue = "")String category,
+                    @RequestParam(name = "pageNo",defaultValue = "0")Integer pageNo,
+                    @RequestParam(name = "pageSize",defaultValue = "8")Integer pageSize){
+        List<Category> categories= categoryService.getAllActiveCategory();
+        m.addAttribute("paramValue",category);
+        m.addAttribute("categories",categories);
+
+       Page<Product> page= productService.getAllActiveProductPagination(pageNo,pageSize,category);
+       List<Product> products=page.getContent();
+       m.addAttribute("products",products);
+       m.addAttribute("productsSize",products.size());
+
+       m.addAttribute("pageNo",page.getNumber());
+       m.addAttribute("pageSize",pageSize);
+       m.addAttribute("totalElements",page.getTotalElements());
+       m.addAttribute("totalPages",page.getTotalPages());
+       m.addAttribute("isFirst",page.isFirst());
+       m.addAttribute("isLast",page.isLast());
         return "product";
     }
     @GetMapping("/product/{id}")
