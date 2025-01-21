@@ -10,6 +10,7 @@ import com.spring.__Ecommerce.App.util.OrderStatus;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
@@ -63,8 +64,17 @@ public class AdminController {
         return "admin/add_product";
     }
     @GetMapping("/addCategory")
-    public String addCategory(Model m){
-        m.addAttribute("categorys",categoryService.getAllCategory());
+    public String addCategory(Model m,@RequestParam(name="pageNo",defaultValue = "0")Integer pageNo,
+                              @RequestParam(name = "pageSize",defaultValue = "3")Integer pageSize){
+        Page<Category> page= categoryService.getAllCategoryPagination(pageNo,pageSize);
+        List<Category> categorys=page.getContent();
+        m.addAttribute("categorys",categorys);
+        m.addAttribute("pageNo",page.getNumber());
+        m.addAttribute("pageSize",pageSize);
+        m.addAttribute("totalElements",page.getTotalElements());
+        m.addAttribute("totalPages",page.getTotalPages());
+        m.addAttribute("isFirst",page.isFirst());
+        m.addAttribute("isLast",page.isLast());
         return "admin/add_category";
     }
     @PostMapping("/saveCategory")
