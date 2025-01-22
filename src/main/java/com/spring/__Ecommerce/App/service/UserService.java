@@ -20,4 +20,5 @@ public interface UserService {
    public UserDtls getUserByToken(String token);
    public UserDtls updateUser(UserDtls user);
    public UserDtls updateUserProfile(UserDtls user, MultipartFile img);
+    public UserDtls saveAdmin(UserDtls user);
 }
