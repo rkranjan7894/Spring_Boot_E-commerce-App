@@ -189,7 +189,7 @@ public class AdminController {
     public String deleteProduct(@PathVariable int id,HttpSession session){
         Boolean deleteProduct=productService.deleteProduct(id);
         if (deleteProduct){
-            session.setAttribute("succMsg","category delete success");
+            session.setAttribute("succMsg","product delete success");
         }else {
             session.setAttribute("errorMsg","something wrong on server");
         }

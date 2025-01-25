@@ -20,9 +20,9 @@ public class Product  {
     private String description;
     private String category;
     private Double price;
-    private int stock;
+    private Integer stock;
     private String image;
-    private int discount;
+    private Integer discount;
     private Double discountPrice;
     private Boolean isActive;
 }
