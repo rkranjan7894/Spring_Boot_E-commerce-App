@@ -107,21 +107,26 @@ public class HomeController {
     }
     @PostMapping("/saveUser")
     public String saveUser(@ModelAttribute UserDtls user, @RequestParam("img") MultipartFile file, HttpSession session) throws IOException {
-    String imageName=file.isEmpty() ? "default.jpg" : file.getOriginalFilename();
-    user.setProfileImage(imageName);
-     UserDtls saveUser=userService.saveUser(user);
-   if (!ObjectUtils.isEmpty(saveUser)){
-    if (!file.isEmpty()){
-        //Store the Image File
-        File saveFile= new ClassPathResource("static/img").getFile();
-        Path path= Paths.get(saveFile.getAbsolutePath()+ File.separator + "profile_img"+File.separator + file.getOriginalFilename());
-         System.out.println(path);
-        Files.copy(file.getInputStream(),path, StandardCopyOption.REPLACE_EXISTING);
-    }
-      session.setAttribute("succMsg","Register Successfully");
-    }else {
-    session.setAttribute("errorMsg","something wrong on server");
-   }
+       Boolean exstsEmail=userService.existsEmail(user.getEmail());
+       if (exstsEmail){
+           session.setAttribute("errorMsg","Email already exist");
+       }else {
+           String imageName = file.isEmpty() ? "default.jpg" : file.getOriginalFilename();
+           user.setProfileImage(imageName);
+           UserDtls saveUser = userService.saveUser(user);
+           if (!ObjectUtils.isEmpty(saveUser)) {
+               if (!file.isEmpty()) {
+                   //Store the Image File
+                   File saveFile = new ClassPathResource("static/img").getFile();
+                   Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "profile_img" + File.separator + file.getOriginalFilename());
+                   System.out.println(path);
+                   Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+               }
+               session.setAttribute("succMsg", "Register Successfully");
+           } else {
+               session.setAttribute("errorMsg", "something wrong on server");
+           }
+       }
         return "redirect:/register";
     }
     //Forgot Password
